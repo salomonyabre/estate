@@ -3,6 +3,7 @@
  "depends":["base"],
  "data":[
     "data/security/ir.model.access.csv",
+    "data/views/estate_menus.xml"
     "data/views/estate_property_views.xml",
  ],
  "installable":True,
