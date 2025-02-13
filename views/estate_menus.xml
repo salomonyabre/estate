@@ -1,0 +1,5 @@
+ <menuitem id="estate_property_menu" name="property">
+    <menuitem id="test_first_menu" name="First menu">
+        <menuitem id="estate_property_menu_action" action="estate_property_model_action"/>
+    </menuitem>
+</menuitem>
