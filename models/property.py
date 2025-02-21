@@ -16,8 +16,14 @@ class estateproperty(models.Model):
     living_area=fields.Integer('liveving area')
     facades=fields.Integer('facades')
     garage=fields.Boolean('garage',default=False)
-    garden=fields.Boolean('garden',default=False)
+    garden=fields.Boolean('garden',)
     garden_area=fields.Integer('garden area')
+    total_areas=fields.Float(compute="_calcule_total")
+    best_price = fields.Float(
+        string="Best Offer",
+        compute="_compute_best_price",
+        store=True
+    )
     garden_orientation=fields.Selection(
         string='garden orientation',
         selection=[('nord','Nord'),('sud','Sud'),('est','Est'),('ouest','Ouest')]
@@ -44,3 +50,23 @@ class estateproperty(models.Model):
     buyer_id = fields.Many2one("res.partner",string="Acheteur", copy=False)
     tag_ids=fields.Many2many("estate.property.tag",string="property tag", required= True)
     offer_ids=fields.One2many('estate.property.offer',"property_id",string="offer")
+
+    @api.depends('living_area',"garden_area")
+    def _calcule_total(self):
+        for record in self:
+            record.total_areas=record.living_area + record.garden_area
+    @api.depends('offer_ids.price')
+    def _compute_best_price(self):
+        for record in self:
+            record.best_price=max(record.offer_ids.mapped('price'),default=0)
+            
+    @api.onchange('garden')
+    def _onchange_garden(self):
+        if self.garden:
+            self.garden_area=10
+            self.garden_orientation='nord'
+        else:
+            self.garden_area=0
+            self.garden_orientation=False
+
+            
