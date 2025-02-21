@@ -52,6 +52,7 @@
                         <group>
                             <field name="date_availability"/>
                             <field name="selling_price"/>
+                            <field name="best_price" readonly="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -65,7 +66,9 @@
                                 <field name="garden"/>
                             
                                 <field name="garden_area"/>
-                                <field name="garden_orientation"/>    
+                                <field name="garden_orientation"/>  
+                                <field  name="total_areas"/>  
+                                 
                                 <field  name="state"/>
                                 <field  name="status"/>
                                 <field name="property_type_id"/>     
@@ -78,6 +81,8 @@
                           <field name="offer_ids">
                           <tree editable="bottom">
                          <field name="price"/>
+                         <field  name ="validity"/>
+                         <field  name ="date_deadline"/>
                          <field name="partner_id"/>
                          <field name="status"/>
                          
@@ -103,14 +108,17 @@
     <field name="arch" type="xml">
         <search string="Estate Property">
             <field name="name" string="Property"/>
+            <field name="postcode" string="postcode"/>
+            <field name="expected_price" string="expected_price"/>
+            <field name="bedrooms" string="bedrooms"/>
+            <field name="living_area" string="living_area"/>
+            <field name="facades" string="facades"/>
             <separator/>
-
             <!-- Filtre sur le statut -->
             <filter string="New" name="new" domain="[('status', '=', 'new')]"/>
             <filter string="Offer Received" name="offer_received" domain="[('status', '=', 'offer_received')]"/>
-
-            <group expand="1" string="Group By">
-                <filter string="postcode" name="group_postcode" context="{'group_by':'postcode'}"/>
+            <group expand="0" string="Group By">
+                <filter string="postcode" name="group_by_postcode" context="{'group_by':'postcode'}"/>
             </group>
         </search>
     </field>
