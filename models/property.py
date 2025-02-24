@@ -1,4 +1,4 @@
-from venv import logger
+from odoo.exceptions import UserError
 import pytz
 from odoo import api, models,fields
 from datetime import date, datetime, time, timedelta
@@ -32,7 +32,13 @@ class estateproperty(models.Model):
    
     status=fields.Selection(
         string='status',
-        selection=[('new','New'),('offer received','Offer Received'),('offer accepted','Offer Accepted'),('sold and canceled',' Sold and Canceled')]
+        selection=[ 
+            ('new', 'New'),
+            ('offer_received', 'Offer Received'),
+            ('offer_accepted', 'Offer Accepted'),
+            ('sold', 'Sold'),
+            ('canceled', 'Canceled')],
+             required=True, copy=False, default='new',
     )
    
     @api.model
@@ -68,5 +74,18 @@ class estateproperty(models.Model):
         else:
             self.garden_area=0
             self.garden_orientation=False
+
+    def action_sold(self):
+        for record in self:
+            if record.status == 'canceled':
+                raise UserError("A canceled property cannot be sold.")
+            record.status = 'sold'
+
+    def action_cancel(self):
+        for record in self:
+            if record.status == 'sold':
+                raise UserError("A sold property cannot be canceled.")
+            record.status = 'canceled'
+       
 
             
