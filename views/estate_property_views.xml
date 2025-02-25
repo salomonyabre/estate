@@ -102,6 +102,9 @@
                         <field name="Salesperson_id" />
                         <field name="buyer_id"/>
                 </group>
+                <group>
+                      <field name="tag_ids" widget="many2many_tags"/>
+                </group>
                 </page>
                 </notebook>
                 </sheet>

@@ -15,6 +15,11 @@ class propertyoffer (models.Model):
     ) 
     partner_id=fields.Many2one('res.partner',string="partner",required=True)
     property_id=fields.Many2one('estate.property',string= "property id",required=True)
+    _sql_constraints = [
+        ('check_offer_price_positive',
+         'CHECK(price >= 0)',
+         "Le prix d'offre doit être strictement positif.")
+    ]
 
     @api.depends('create_date', 'validity')
     def _compute_date_deadline(self):
@@ -37,7 +42,7 @@ class propertyoffer (models.Model):
             if offer.property_id.selling_price:
                 raise ValueError("Une offre a déjà été acceptée pour ce bien.")
             offer.status = 'accepted'
-            offer.property_id.selling_price = offer.price
+            offer.property_id.selling_price = offer.priceœ
             offer.property_id.buyer_id = offer.partner_id
 
     def action_refuse(self):
