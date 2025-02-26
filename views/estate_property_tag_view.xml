@@ -5,6 +5,7 @@
         <field name="res_model">estate.property.tag</field>
         <field name="view_mode">tree,form</field>
     </record>
+    
     <record id="view_estate_property_tag_tree" model="ir.ui.view">
     <field name="name">estate.property.tag.tree</field>
     <field name="model">estate.property.tag</field>
@@ -21,22 +22,11 @@
     <field name="arch" type="xml">
       <form string="Property tag">
         <sheet>
-          <group>
+          <group> 
             <field name="name"/>
           </group>
         </sheet>
       </form>
     </field>
-  </record>
-  <menuitem 
-   id="menu_estate_property_tag_root"
-   name="Property Tags" 
-   parent="estate_property_menu" 
-   sequence="20"/>
-  <menuitem
-    id="menu_estate_property_tag"
-    name="Tags" 
-    parent="estate_property_menu" 
-    action="action_estate_property_tag" 
-    sequence="10"/>
+  </record> 
 </odoo>

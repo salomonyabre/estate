@@ -6,8 +6,8 @@ class propertyoffer (models.Model):
     _description= "estate property offer"
     price=fields.Float(string="price")
     validity=fields.Integer("validity(day)",default=7)
-    create_date = fields.Date(string="Creation Date", readonly=True,)
-    date_deadline=fields.Date(compute="_compute_date_deadline", inverse="_inverse_date_deadline",
+    #create_date = fields.Date(string="Creation Date", readonly=True,)
+    date_deadline=fields.Datetime(compute="_compute_date_deadline", inverse="_inverse_date_deadline",
         store=True)
     status=fields.Selection(
         string="status",copy=False,
@@ -39,11 +39,20 @@ class propertyoffer (models.Model):
     def action_accept(self):
         """ Accepter l'offre et mettre à jour l'acheteur et le prix de vente """
         for offer in self:
-            if offer.property_id.selling_price:
-                raise ValueError("Une offre a déjà été acceptée pour ce bien.")
-            offer.status = 'accepted'
-            offer.property_id.selling_price = offer.priceœ
-            offer.property_id.buyer_id = offer.partner_id
+            if offer.property_id.buyer_id:
+                # Option 1 : lever une erreur (comportement actuel)
+                # raise UserError("Une offre a déjà été acceptée pour ce bien.")
+                
+                # Option 2 : remplacer l'offre existante par la nouvelle
+                offer.property_id.buyer_id = offer.partner_id
+                offer.property_id.selling_price = offer.price
+                offer.property_id.state = 'offer_accepted'
+                offer.status = 'accepted'
+            else:
+                offer.status = 'accepted'
+                offer.property_id.buyer_id = offer.partner_id
+                offer.property_id.selling_price = offer.price
+                offer.property_id.state = 'offer_accepted'
 
     def action_refuse(self):
         """ Refuser l'offre """
