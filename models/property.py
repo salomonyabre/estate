@@ -1,5 +1,7 @@
 from odoo.exceptions import UserError
 import pytz
+from odoo.exceptions import ValidationError
+
 from odoo import api, models,fields
 from datetime import date, datetime, time, timedelta
 
@@ -10,7 +12,7 @@ class estateproperty(models.Model):
     description= fields.Char('description')
     postcode= fields.Char('code postal')
     date_availability=fields.Date('date availability',copy=False)
-    expected_price=fields.Float('expected price',required=True,Default=0)
+    expected_price=fields.Float( 'expected price',required=True)
     selling_price=fields.Float('selling price',readonly=True,copy=False)
     bedrooms = fields.Integer('bedrooms',default=2)
     living_area=fields.Integer('liveving area')
@@ -43,11 +45,8 @@ class estateproperty(models.Model):
     # definition des containte en odoo module
 
     _sql_constraints = [
-        ('check_expected_price_positive','CHECK(expected_price >= 0)',
-         "Le prix immobilier attendu doit être strictement positif."),
-        ('check_selling_price_positive',
-         'CHECK(selling_price >= 0)',
-         "Le prix de vente doit être positif.")
+        ('check_expected_price', 'CHECK(expected_price > 0)', "Le prix attendu doit être strictement positif."),
+        ('check_selling_price', 'CHECK(selling_price >= 0)', "Le prix de vente doit être positif."),
     ]
    #cette partier est strictement utilise pour les differnte methode
     @api.model
@@ -94,7 +93,23 @@ class estateproperty(models.Model):
         for record in self:
             if record.status == 'sold':
                 raise UserError("A sold property cannot be canceled.")
-            record.status = 'canceled'
-       
+            
+    @api.constrains('expected_price','selling_price')
+    def _check_price_positive(self):
+        for record in self:
+            if record.expected_price <= 0 or record.expected_price <= 0 :
+                raise ValidationError("Le prix de selling price  or expected price doit être strictement positif.")
+   
+   
+    @api.constrains('selling_price', 'expected_price')
+    def _check_selling_price(self):
+        for record in self:
+            "On ne vérifie que si le prix de vente est défini (non nul)"
+            if record.selling_price:
+                if record.expected_price and record.selling_price < 0.9 * record.expected_price:
+                    raise ValidationError(
+                        "Le prix de vente doit être au moins de 90% du prix attendus."
+                    )
+
 
             
