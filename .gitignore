@@ -1,2 +1,3 @@
 # Ignorer les fichiers de cache Python
+estate/
 __pycache__/
