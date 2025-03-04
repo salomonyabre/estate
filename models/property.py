@@ -10,7 +10,7 @@ class estateproperty(models.Model):
     description= fields.Char('description')
     postcode= fields.Char('code postal')
     date_availability=fields.Date('date availability',copy=False)
-    expected_price=fields.Float('expected price',required=True)
+    expected_price=fields.Float('expected price',required=True,Default=0)
     selling_price=fields.Float('selling price',readonly=True,copy=False)
     bedrooms = fields.Integer('bedrooms',default=2)
     living_area=fields.Integer('liveving area')
@@ -34,13 +34,22 @@ class estateproperty(models.Model):
         string='status',
         selection=[ 
             ('new', 'New'),
-            ('offer_received', 'Offer Received'),
-            ('offer_accepted', 'Offer Accepted'),
+            #('offer_received', 'Offer Received'),
+            #('offer_accepted', 'Offer Accepted'),
             ('sold', 'Sold'),
             ('canceled', 'Canceled')],
              required=True, copy=False, default='new',
     )
-   
+    # definition des containte en odoo module
+
+    _sql_constraints = [
+        ('check_expected_price_positive','CHECK(expected_price >= 0)',
+         "Le prix immobilier attendu doit être strictement positif."),
+        ('check_selling_price_positive',
+         'CHECK(selling_price >= 0)',
+         "Le prix de vente doit être positif.")
+    ]
+   #cette partier est strictement utilise pour les differnte methode
     @api.model
     def default_get(self, fields_list):
         #Définit les valeurs par défaut pour les champs spécifiés ici ces le nom du model qui doit etre ajoute dans le supert.
