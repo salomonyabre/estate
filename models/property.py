@@ -8,6 +8,7 @@ from datetime import date, datetime, time, timedelta
 class estateproperty(models.Model):
     _name = "estate.property"
     _description= "estate property"
+    _order="id desc"
     name=fields.Char('name',required=True) 
     description= fields.Char('description')
     postcode= fields.Char('code postal')
@@ -31,11 +32,12 @@ class estateproperty(models.Model):
         selection=[('nord','Nord'),('sud','Sud'),('est','Est'),('ouest','Ouest')]
     )
     state=fields.Boolean("active",default=False)
-   
+    
     status=fields.Selection(
         string='status',
         selection=[ 
             ('new', 'New'),
+            
             #('offer_received', 'Offer Received'),
             #('offer_accepted', 'Offer Accepted'),
             ('sold', 'Sold'),
@@ -60,7 +62,7 @@ class estateproperty(models.Model):
         return defaults
     property_type_id = fields.Many2one('estate.property.type', string="Property Type")
     
-    Salesperson_id = fields.Many2one('res.users', string='Salesperson', index=True, tracking=True, default=lambda self: self.env.user)
+    salesperson_id = fields.Many2one('res.users', string='Salesperson', index=True, tracking=True, default=lambda self: self.env.user)
     buyer_id = fields.Many2one("res.partner",string="Acheteur", copy=False)
     tag_ids=fields.Many2many("estate.property.tag",string="property tag", required= True)
     offer_ids=fields.One2many('estate.property.offer',"property_id",string="offer")
@@ -82,9 +84,11 @@ class estateproperty(models.Model):
         else:
             self.garden_area=0
             self.garden_orientation=False
+    
 
     def action_sold(self):
         for record in self:
+            
             if record.status == 'canceled':
                 raise UserError("A canceled property cannot be sold.")
             record.status = 'sold'
@@ -93,13 +97,15 @@ class estateproperty(models.Model):
         for record in self:
             if record.status == 'sold':
                 raise UserError("A sold property cannot be canceled.")
+            record.status = 'canceled'
+                
+
             
     @api.constrains('expected_price','selling_price')
     def _check_price_positive(self):
         for record in self:
             if record.expected_price <= 0 or record.expected_price <= 0 :
                 raise ValidationError("Le prix de selling price  or expected price doit être strictement positif.")
-   
    
     @api.constrains('selling_price', 'expected_price')
     def _check_selling_price(self):
@@ -110,6 +116,7 @@ class estateproperty(models.Model):
                     raise ValidationError(
                         "Le prix de vente doit être au moins de 90% du prix attendus."
                     )
+                
 
 
             

@@ -6,23 +6,23 @@ from odoo.exceptions import UserError
 class propertyoffer (models.Model):
     _name="estate.property.offer"
     _description= "estate property offer"
+    _order=" price desc"
+    status = fields.Selection([
+        ('accepted', 'Accepted'),
+        ('refused', 'Refused')
+    ], string="Status",)
+
     price=fields.Float(string="price")
     validity=fields.Integer("validity(day)",default=7)
     #create_date = fields.Date(string="Creation Date", readonly=True,)
     date_deadline=fields.Datetime(compute="_compute_date_deadline", inverse="_inverse_date_deadline",
         store=True)
-    status=fields.Selection(
-        string="status",copy=False,
-        selection=[('accepted','Accepted'),('refused','Refused')]
-    ) 
+    property_type_id = fields.Many2one(related='property_id.property_type_id', string="Property Type", store=True)
     partner_id=fields.Many2one('res.partner',string="partner",required=True)
     property_id=fields.Many2one('estate.property',string= "property id",required=True)
     _sql_constraints = [
-        
         ('check_price_positive', 'CHECK(price > 0)',"le prix doit est positive" ),
-        
     ]
-
     @api.depends('create_date', 'validity')
     def _compute_date_deadline(self):
         """Calcule la date de fin de validité (deadline) en ajoutant validity à create_date."""
@@ -51,17 +51,17 @@ class propertyoffer (models.Model):
                 offer.property_id.buyer_id = offer.partner_id
                 offer.property_id.expected_price = offer.price
                 offer.property_id.selling_price = offer.price
-                offer.property_id.state = 'offer_accepted'
+                
                 offer.status = 'accepted'
             else:
                 offer.status = 'accepted'
                 offer.property_id.buyer_id = offer.partner_id
                 offer.property_id.selling_price = offer.price
-                offer.property_id.state = 'offer_accepted'
-
+    
     def action_refuse(self):
         """ Refuser l'offre """
         self.status = 'refused'
+        
 
     @api.constrains('price')
     def _check_price_positive(self):

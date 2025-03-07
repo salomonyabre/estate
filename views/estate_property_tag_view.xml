@@ -10,7 +10,8 @@
     <field name="name">estate.property.tag.tree</field>
     <field name="model">estate.property.tag</field>
     <field name="arch" type="xml">
-      <tree string="Property tag">
+
+      <tree editable="bottom" string="Property tag">
         <field name="name"/>
       </tree>
     </field>

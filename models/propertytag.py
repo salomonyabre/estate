@@ -3,7 +3,9 @@ from odoo.exceptions import UserError
 class propertytag(models.Model):
     _name= "estate.property.tag"
     _description= "estate property tage"
+    _order="name"
     name= fields.Char("name", required=True)
+    color = fields.Integer(string="Color") 
     _sql_constraints=[
         ('unique_property_tag_name','unique(name)',"Le nom de l'étiquette doit être unique.")
     ]
