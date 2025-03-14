@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 from odoo import api, models,fields
 from datetime import date, datetime, time, timedelta
 
+
 class estateproperty(models.Model):
     _name = "estate.property"
     _description= "estate property"
@@ -33,13 +34,13 @@ class estateproperty(models.Model):
     )
     state=fields.Boolean("active",default=False)
     
-    status=fields.Selection(
-        string='status',
+    state=fields.Selection(
+        string='state',
         selection=[ 
             ('new', 'New'),
             
-            #('offer_received', 'Offer Received'),
-            #('offer_accepted', 'Offer Accepted'),
+            ('offer_received', 'Offer Received'),
+            ('offer_accepted', ' Acoffer_accepted'),
             ('sold', 'Sold'),
             ('canceled', 'Canceled')],
              required=True, copy=False, default='new',
@@ -66,7 +67,7 @@ class estateproperty(models.Model):
     buyer_id = fields.Many2one("res.partner",string="Acheteur", copy=False)
     tag_ids=fields.Many2many("estate.property.tag",string="property tag", required= True)
     offer_ids=fields.One2many('estate.property.offer',"property_id",string="offer")
-
+    user_id = fields.Many2one('res.users', string="Salesperson")
     @api.depends('living_area',"garden_area")
     def _calcule_total(self):
         for record in self:
@@ -89,15 +90,15 @@ class estateproperty(models.Model):
     def action_sold(self):
         for record in self:
             
-            if record.status == 'canceled':
+            if record.state == 'canceled':
                 raise UserError("A canceled property cannot be sold.")
-            record.status = 'sold'
+            record.state = 'sold'
 
     def action_cancel(self):
         for record in self:
-            if record.status == 'sold':
+            if record.state == 'sold':
                 raise UserError("A sold property cannot be canceled.")
-            record.status = 'canceled'
+            record.state = 'canceled'
                 
 
             
@@ -116,7 +117,16 @@ class estateproperty(models.Model):
                     raise ValidationError(
                         "Le prix de vente doit être au moins de 90% du prix attendus."
                     )
-                
+ 
+    
 
 
-            
+
+    @api.ondelete(at_uninstall=False)
+    def _check_state_on_delete(self):
+        for record in self:
+            if record.state not in ['new', 'canseled']:
+                raise ValidationError("Vous ne pouvez supprimer qu'une propriété avec le statut 'Nouveau' ou 'Annulé'.")
+    
+   
+    property_ids = fields.One2many('estate.property', 'user_id', string="Properties")

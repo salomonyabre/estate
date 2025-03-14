@@ -19,7 +19,7 @@ class propertyoffer (models.Model):
         store=True)
     property_type_id = fields.Many2one(related='property_id.property_type_id', string="Property Type", store=True)
     partner_id=fields.Many2one('res.partner',string="partner",required=True)
-    property_id=fields.Many2one('estate.property',string= "property id",required=True)
+    property_id=fields.Many2one('estate.property',string= "property id",required=True,ondelete='cascade')
     _sql_constraints = [
         ('check_price_positive', 'CHECK(price > 0)',"le prix doit est positive" ),
     ]
@@ -69,5 +69,22 @@ class propertyoffer (models.Model):
             if record.price <= 0:
                 raise ValidationError("Le prix  dans l'offre doit être strictement positif.")
     
+    @api.model
+    def create(self, vals):
+        property_id = self.env['estate.property'].browse(vals.get('property_id'))
 
+        # Vérifier si l'offre est inférieure à une offre existante
+        existing_offers = self.env['estate.property.offer'].search([
+            ('property_id', '=', property_id.id)
+        ])
+        if existing_offers and vals.get('price') < max(existing_offers.mapped('price')):
+        
+            max_offer_price = max(existing_offers.mapped('price')) if existing_offers else 0.0
+            raise ValidationError(f"L'offre doit être supérieure à {max_offer_price}.")
+            #raise ValidationError("L'offre doit être supérieure  à la meilleure offre existante qui est ." )
+
+        # Mettre à jour l'état de la propriété à "Offre reçue"
+        property_id.state = 'offer_received'
+
+        return super().create(vals)
     

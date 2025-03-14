@@ -48,12 +48,12 @@
             <form string="estateproperty">
                 <header>
                     <button name="action_cancel" type="object" string="cancel" 
-                        class="oe_highlight"  invisible="status == 'sold'"/>
+                        class="oe_highlight"  invisible="state == 'sold'"/>
                         
                     <button name="action_sold" type="object" string="sold"
-                        class="oe_highlight"  invisible="status == 'sold'"/>
+                        class="oe_highlight"  invisible="state == 'sold'"/>
          
-                    <field  name="status" widget="statusbar" />
+                    <field  name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <group>            
@@ -86,7 +86,7 @@
                                                 <field name="garden_orientation" invisible="not garden"/>  
                                                 <field  name="total_areas"/>          
                                                 <field  name="state"/>
-                                                 <field  name="status" />
+                                                 
                                             </group>
                                                
                                     </page>
@@ -137,11 +137,11 @@
 
             <separator/>
             <!-- Filtre sur le statut -->
-            <filter string="New" name="new" domain="[('status', '=', 'new')]"/>
-            <filter string="Offer Received" name="offer_received" domain="[('status', '=', 'offer_received')]"/>
+            <filter string="New" name="new" domain="[('state', '=', 'new')]"/>
+            <filter string="Offer Received" name="offer_received" domain="[('state', '=', 'offer_received')]"/>
             <group expand="0" string="Group By">
             <filter string="postcode" name="group_by_postcode" context="{'group_by':'postcode'}"/>
-            <filter name="available" string="available" domain="[('status','=','sold')]" />
+            <filter name="available" string="available" domain="[('state','=','new')]" />
             
              <field name="description" string="surface habitable"
              filter_domain="[('living_area', '>=', self)]"/>
@@ -149,4 +149,6 @@
         </search>
     </field>
 </record>
+
+  
 </odoo>

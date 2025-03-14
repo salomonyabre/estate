@@ -11,6 +11,7 @@
         name="property type"
         parent="estate.estate_property_menu" 
         action="estate_property_type_action"/>
+    
     <menuitem 
         id="estat_property_menu_tag"
         name= "property tag"
