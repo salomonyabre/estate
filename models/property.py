@@ -38,7 +38,7 @@ class estateproperty(models.Model):
         string='state',
         selection=[ 
             ('new', 'New'),
-            
+            ('available', 'Available'),
             ('offer_received', 'Offer Received'),
             ('offer_accepted', ' Acoffer_accepted'),
             ('sold', 'Sold'),
@@ -63,11 +63,11 @@ class estateproperty(models.Model):
         return defaults
     property_type_id = fields.Many2one('estate.property.type', string="Property Type")
     
-    salesperson_id = fields.Many2one('res.users', string='Salesperson', index=True, tracking=True, default=lambda self: self.env.user)
+    salesperson_id = fields.Many2one('res.users', string='Salesperson',  default=lambda self: self.env.user)
     buyer_id = fields.Many2one("res.partner",string="Acheteur", copy=False)
     tag_ids=fields.Many2many("estate.property.tag",string="property tag", required= True)
     offer_ids=fields.One2many('estate.property.offer',"property_id",string="offer")
-    user_id = fields.Many2one('res.users', string="Salesperson")
+    
     @api.depends('living_area',"garden_area")
     def _calcule_total(self):
         for record in self:
@@ -99,8 +99,6 @@ class estateproperty(models.Model):
             if record.state == 'sold':
                 raise UserError("A sold property cannot be canceled.")
             record.state = 'canceled'
-                
-
             
     @api.constrains('expected_price','selling_price')
     def _check_price_positive(self):
@@ -117,11 +115,6 @@ class estateproperty(models.Model):
                     raise ValidationError(
                         "Le prix de vente doit être au moins de 90% du prix attendus."
                     )
- 
-    
-
-
-
     @api.ondelete(at_uninstall=False)
     def _check_state_on_delete(self):
         for record in self:
@@ -129,4 +122,3 @@ class estateproperty(models.Model):
                 raise ValidationError("Vous ne pouvez supprimer qu'une propriété avec le statut 'Nouveau' ou 'Annulé'.")
     
    
-    property_ids = fields.One2many('estate.property', 'user_id', string="Properties")

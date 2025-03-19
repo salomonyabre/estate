@@ -7,29 +7,18 @@
     <field name ="view_mode">tree,form</field>
      <field name="context">{'search_default_available': True, 'search_default_curent': True}</field> 
      
-    </record> 
+    </record>  
+   
  
-    <menuitem id="estate_menu_root" name="Estate"/>
-<menuitem 
-        id="estate_property_menu" 
-        name="setting" 
-        parent="estate.estate_menu_root"
-        action="estate_property_action"/>
- <menuitem 
-        id="estate_property_menu_action" 
-        name="property type"
-        parent="estate.estate_property_menu" 
-        action="estate_property_type_action"/>
-    <!--  affichage en liste dans  /--> 
     <record id="view_estate_property_tree" model="ir.ui.view">
         <field name="name">estate.property.tree</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-        <tree string="property">
+        <tree >
 
                 <field name="name"/>
-                <field  name="property_type_id"/>
-             <field  name ="tag_ids" widget="many2many_tags" /> 
+                <field  name="property_type_id" />
+                <field  name ="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/> 
                 <field name="postcode"/>
                     
                 <field name="bedrooms"/>
@@ -68,7 +57,7 @@
                                     <field name="expected_price"/>
                                 </group>
                                 <group>
-                                    <field name="date_availability" optional= "hider"/>
+                                    <field name="date_availability" optional= "hide"/>
                                     <field name="selling_price"/>
                                     <field name="best_price" readonly="1"/>
                                 </group>
@@ -143,8 +132,8 @@
             <filter string="postcode" name="group_by_postcode" context="{'group_by':'postcode'}"/>
             <filter name="available" string="available" domain="[('state','=','new')]" />
             
-             <field name="description" string="surface habitable"
-             filter_domain="[('living_area', '>=', self)]"/>
+             <!--field name="description" string="surface habitable"
+             filter_domain="[('living_area', '>=', self)]"/-->
             </group>
         </search>
     </field>
