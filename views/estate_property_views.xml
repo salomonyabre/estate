@@ -130,10 +130,10 @@
             <filter string="Offer Received" name="offer_received" domain="[('state', '=', 'offer_received')]"/>
             <group expand="0" string="Group By">
             <filter string="postcode" name="group_by_postcode" context="{'group_by':'postcode'}"/>
-            <filter name="available" string="available" domain="[('state','=','new')]" />
+            <filter name="available" string="available" domain="[('state','=','available')]" />
             
-             <!--field name="description" string="surface habitable"
-             filter_domain="[('living_area', '>=', self)]"/-->
+             <!--ield name="description" string="surface"
+             filter_domain="[('living_area', '>=',0)]"/-->
             </group>
         </search>
     </field>
