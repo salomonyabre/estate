@@ -133,7 +133,7 @@
             <filter name="available" string="available" domain="[('state','=','available')]" />
             
              <!--ield name="description" string="surface"
-             filter_domain="[('living_area', '>=',0)]"/-->
+             filter_domain="[('living_area', '>=',0)]"-->
             </group>
         </search>
     </field>

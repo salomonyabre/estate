@@ -40,7 +40,7 @@ class estateproperty(models.Model):
             ('new', 'New'),
             ('available', 'Available'),
             ('offer_received', 'Offer Received'),
-            ('offer_accepted', ' Acoffer_accepted'),
+            ('offer_accepted', ' offer_accepted'),
             ('sold', 'Sold'),
             ('canceled', 'Canceled')],
              required=True, copy=False, default='new',
