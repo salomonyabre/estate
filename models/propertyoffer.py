@@ -25,7 +25,6 @@ class propertyoffer (models.Model):
     ]
     @api.depends('create_date', 'validity')
     def _compute_date_deadline(self):
-        """Calcule la date de fin de validité (deadline) en ajoutant validity à create_date."""
         for record in self:
             create_date = record.create_date or fields.Datetime.now()
             record.date_deadline = create_date + timedelta(days=record.validity)
@@ -45,9 +44,8 @@ class propertyoffer (models.Model):
             #if expected_price and offer.price < 0.9 * expected_price:
             #    raise UserError("L'offre doit être au moins de 90 % du prix attendu.")
             if offer.property_id.buyer_id:
-                # Option 1 : lever une erreur (comportement actuel)
                 # raise UserError("Une offre a déjà été acceptée pour ce bien.")    
-                # Option 2 : remplacer l'offre existante par la nouvelle
+               
                 offer.property_id.buyer_id = offer.partner_id
                 offer.property_id.expected_price = offer.price
                 offer.property_id.selling_price = offer.price
@@ -62,18 +60,15 @@ class propertyoffer (models.Model):
         """ Refuser l'offre """
         self.status = 'refused'
         
-
     @api.constrains('price')
     def _check_price_positive(self):
         for record in self:
-            if record.price <= 0:
+            if record.price <=0:
                 raise ValidationError("Le prix  dans l'offre doit être strictement positif.")
     
     @api.model
     def create(self, vals):
         property_id = self.env['estate.property'].browse(vals.get('property_id'))
-
-        # Vérifier si l'offre est inférieure à une offre existante
         existing_offers = self.env['estate.property.offer'].search([
             ('property_id', '=', property_id.id)
         ])
@@ -81,10 +76,7 @@ class propertyoffer (models.Model):
         
             max_offer_price = max(existing_offers.mapped('price')) if existing_offers else 0.0
             raise ValidationError(f"L'offre doit être supérieure à {max_offer_price}.")
-            #raise ValidationError("L'offre doit être supérieure  à la meilleure offre existante qui est ." )
-
-        # Mettre à jour l'état de la propriété à "Offre reçue"
+            
         property_id.state = 'offer_received'
-
         return super().create(vals)
     

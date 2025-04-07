@@ -4,8 +4,6 @@ from odoo.exceptions import ValidationError
 
 from odoo import api, models,fields
 from datetime import date, datetime, time, timedelta
-
-
 class estateproperty(models.Model):
     _name = "estate.property"
     _description= "estate property"
@@ -20,7 +18,7 @@ class estateproperty(models.Model):
     living_area=fields.Integer('liveving area')
     facades=fields.Integer('facades')
     garage=fields.Boolean('garage',default=False)
-    garden=fields.Boolean('garden',)
+    garden=fields.Boolean('garden')
     garden_area=fields.Integer('garden area')
     total_areas=fields.Float(compute="_calcule_total")
     best_price = fields.Float(
@@ -54,9 +52,7 @@ class estateproperty(models.Model):
    #cette partier est strictement utilise pour les differnte methode
     @api.model
     def default_get(self, fields_list):
-        #Définit les valeurs par défaut pour les champs spécifiés ici ces le nom du model qui doit etre ajoute dans le supert.
         defaults = super().default_get(fields_list)
-        # Ajout de la date de disponibilité par défaut (+90 jours)
         if 'date_availability' in fields_list:
             defaults['date_availability'] = date.today() + timedelta(days=90)
 
@@ -105,7 +101,6 @@ class estateproperty(models.Model):
         for record in self:
             if record.expected_price <= 0 or record.expected_price <= 0 :
                 raise ValidationError("Le prix de selling price  or expected price doit être strictement positif.")
-   
     @api.constrains('selling_price', 'expected_price')
     def _check_selling_price(self):
         for record in self:
@@ -120,5 +115,3 @@ class estateproperty(models.Model):
         for record in self:
             if record.state not in ['new', 'canseled']:
                 raise ValidationError("Vous ne pouvez supprimer qu'une propriété avec le statut 'Nouveau' ou 'Annulé'.")
-    
-   
