@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_estate_property_type_wizard_form" model="ir.ui.view">
+        <field name="name">estate.property.type.wizard.form</field>
+        <field name="model">estate.property.type.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ajouter un type de propriété">
+                <group>
+                    <field name="name"/>
+                </group>
+                <footer>
+                    <button string="Créer" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_estate_property_type_wizard" model="ir.actions.act_window">
+        <field name="name">Ajouter un type</field>
+        <field name="res_model">estate.property.type.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'from_ui': True}</field>
+    </record>
+    <record id="action_open_property_type_wizard" model="ir.actions.act_window">
+        <field name="name">New Property Type</field>
+        <field name="res_model">estate.property.type.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+  
+    
+   
+    
+</odoo>

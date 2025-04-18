@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
+
     <menuitem id="estate_menu_root" name="Estate"/>
     <menuitem 
         id="estate_property_menu" 
@@ -7,14 +8,21 @@
         parent="estate.estate_menu_root"
         action="estate_property_action"/>
     <menuitem 
-        id="estate_property_menu_action" 
-        name="property type"
-        parent="estate.estate_property_menu" 
-        action="estate_property_type_action"/>
-    <menuitem 
         id="estat_property_menu_tag"
         name= "property tag"
         parent="estate.estate_property_menu"
         action ="estate_property_tag"
     />
+    <menuitem id="menu_estate_property_type_wizard_root"
+          name="Ajouter un type"
+          parent="estate.estate_property_menu"
+          action="action_estate_property_type_wizard"
+          />
+    <menuitem 
+    id="estate_property_type"
+    name="property type"
+    parent="estate.estate_property_menu"
+    action="estate_property_type_action"
+    />
+   
 </odoo>
